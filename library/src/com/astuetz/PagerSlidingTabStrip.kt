@@ -443,12 +443,30 @@ class PagerSlidingTabStrip @JvmOverloads constructor(context: Context, attrs: At
         return savedState
     }
 
-    internal class SavedState(superState: Parcelable?) : BaseSavedState(superState) {
+    internal class SavedState : BaseSavedState {
         var currentPosition = 0
+
+        constructor(superState: Parcelable?) : super(superState)
+        private constructor(source: Parcel) : super(source) {
+            currentPosition = source.readInt()
+        }
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             super.writeToParcel(dest, flags)
             dest.writeInt(currentPosition)
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+                override fun createFromParcel(source: Parcel): SavedState {
+                    return SavedState(source)
+                }
+
+                override fun newArray(size: Int): Array<SavedState?> {
+                    return arrayOfNulls(size)
+                }
+            }
         }
     }
 }
